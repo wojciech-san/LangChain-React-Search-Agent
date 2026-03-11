@@ -6,7 +6,9 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+
 from tavily import TavilyClient
+#from langchain_tavily import TavilySearch
 
 tavily = TavilyClient(api_key=os.environ.get("TAVILY_API_KEY"))
 
@@ -29,11 +31,14 @@ llm = ChatGoogleGenerativeAI(
 )
 
 tools = [search]
+#tools = [TavilySearch(api_key=os.environ.get("TAVILY_API_KEY"))] 
 agent = create_agent(model=llm,tools=tools)
+
+content = "search for 3 job postings for an ai engineer using langchain in the bay area linkedin and list their details"
 
 def main():
     print("Hello from langchain-react-search-agent!")
-    result = agent.invoke({"messages":HumanMessage(content="What is the weather in Toyko?")})
+    result = agent.invoke({"messages":HumanMessage(content=content)})
     print(result)
 
 if __name__ == "__main__":
