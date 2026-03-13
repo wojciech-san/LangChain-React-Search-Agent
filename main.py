@@ -8,6 +8,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI,AzureChatOpenAI
 
 from tavily import TavilyClient
 from langchain_tavily import TavilySearch
@@ -36,12 +37,18 @@ class AgentResponse(BaseModel):
     answer: str = Field(description="The agent's answer to the query")
     sources: List[Source] = Field(description="The sources used by the agent")    
 
-llm = ChatGoogleGenerativeAI(
-        temperature=0,
-        model="gemini-2.5-flash",
-        api_key=os.environ.get("GOOGLE_API_KEY")  
+# llm = ChatGoogleGenerativeAI(
+#         temperature=0,
+#         model="gemini-2.5-flash",
+#         api_key=os.environ.get("GOOGLE_API_KEY")  
+# )
+llm = AzureChatOpenAI(
+    azure_deployment="gpt-4.1-mini",
+    api_version="2024-12-01-preview",
+    temperature=0,
+    azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
 )
-
 #tools = [search]
 tools = [TavilySearch(api_key=os.environ.get("TAVILY_API_KEY"))] 
 agent = create_agent(model=llm,tools=tools,response_format=AgentResponse)
